@@ -1,0 +1,16 @@
+/* styles for canvas */
+/*#game-canvas {
+  background-color: grey;
+  border: 1px solid #000000;
+  margin: 50px;
+}*/
+
+#game-canvas {
+  background-color: green;
+  width: 720px;
+  height: 624px;
+  margin: 50px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #000000;
+}
