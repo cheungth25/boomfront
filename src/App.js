@@ -17,7 +17,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <GameBoard />
+        <GameBoard xDim={720} yDim={624}/>
       </div>
     );
   }

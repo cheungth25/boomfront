@@ -3,10 +3,17 @@ import '../css/GameBoard.css';
 import charImg from '../assests/bomberman_01.png'
 import bombImg from '../assests/bomb_01.png'
 import wallImg from '../assests/wall_01.png'
+import spriteImg from '../assests/bomberman_sprite_moving.png'
 import { Layer, Stage, Image } from 'react-konva'
-import { KeyListener, WallTile, TileMap } from '../notes.js'
+import { KeyListener } from '../utils/KeyListener.js'
+import TileMap from './TileMap'
+import Character from './Character'
+import { connect } from 'react-redux'
+import { addEntity, removeEntity } from '../actions/entities'
+import { setCharPos, updateCharXY } from '../actions/character'
+import { bindActionCreators } from 'redux'
 
-export default class GameBoard extends React.Component {
+class GameBoard extends React.Component {
 
   constructor(props) {
     super(props)
@@ -18,11 +25,12 @@ export default class GameBoard extends React.Component {
     this.speedX = 0;
     this.speedY = 0;
 
-
     this.state = {
-      // board dimensions is 15 x 10 (x48)
-      xDim: 720,
-      yDim: 624,
+      // board dimensions is 15 x 13 (x48)
+      // width and height for tileSize should be the same ex: 48x48
+      xDim: props.xDim,
+      yDim: props.yDim,
+      tileSize: props.xDim/15,
       charPos: {
         x: 48,
         y: 48
@@ -32,7 +40,7 @@ export default class GameBoard extends React.Component {
   }
 
   componentDidMount(){
-    /*
+    /* args: array of key events
       UP: 38
       DOWN: 40
       LEFT: 37
@@ -48,56 +56,36 @@ export default class GameBoard extends React.Component {
     this.keyListener.unsubscribe();
   }
 
+  // shouldComponentUpdate(nextProps, nextState){
+  //   if (this.state.bombs !== nextState.bombs) {
+  //     console.log("in bomb should update?", this.state.bombs, nextState.bombs)
+  //   }
+  // }
 
-  // #######################################
-  playerAction = () => {
-    this.clearMove();
-    if ( this.keyListener.isPressed(32) ) { //SPACE
-      this.dropBomb();
-    }else if ( this.keyListener.isPressed(38) ) { //UP
-      this.moveUp();
-    }else if ( this.keyListener.isPressed(40) ) { //DOWN
-      this.moveDown();
-    }else if ( this.keyListener.isPressed(37) ) { //LEFT
-      this.moveLeft();
-    }else if ( this.keyListener.isPressed(39) ) { //RIGHT
-      this.moveRight();
-    }
+  displayBombs = () => {
+    let bombs = []
+    this.props.entities.forEach((entity, index)=>{
+      if (entity.type === 3){
+        bombs.push(
+          <Bomb
+            key={index}
+            src={bombImg}
+            x={entity.x}
+            y={entity.y}
+            width={entity.width}
+            height={entity.height}
+          />
+        )
+      }
+    })
+    return (bombs)
   }
-  // character actions
-    dropBomb = () => {
-
-    }
-    moveUp = () => {
-      this.speedY = -1;
-    }
-    moveDown = () => {
-      this.speedY = 1;
-    }
-    moveLeft = () => {
-      this.speedX = -1;
-    }
-    moveRight = () => {
-      this.speedX = 1;
-    }
-    clearMove = () => {
-      this.speedX = 0;
-      this.speedY = 0;
-    }
-
-  // #######################################
-  // collision
-
 
   // ##############
   gameLoop = () => {
-    this.playerAction()
-    this.setState({
-      charPos: {
-        x: this.state.charPos.x + this.speedX,
-        y: this.state.charPos.y + this.speedY
-      }
-    })
+    // calling child's (character) playerAction method
+    this.refs.character.getWrappedInstance().playerAction()
+    this.props.updateCharXY()
     this.loopID = window.requestAnimationFrame(this.gameLoop);
   }
 
@@ -153,29 +141,39 @@ export default class GameBoard extends React.Component {
           <Layer>
 
             <Character
-              src={charImg}
-              x={this.state.charPos.x}
-              y={this.state.charPos.y}
+              ref='character'
+              src={spriteImg}
+              x={this.props.charPos.x}
+              y={this.props.charPos.y}
               width={(this.state.xDim/15)}
               height={(this.state.yDim/13)}
+              keyListener={this.keyListener}
+              xDim={this.state.xDim}
+              yDim={this.state.yDim}
+              tileSize={this.state.tileSize}
             />
 
             <Bomb
               src={bombImg}
-              x={50}
-              y={50}
+              x={48}
+              y={48}
               width={(this.state.xDim/15)}
               height={(this.state.yDim/13)}
             />
 
-            <WallTile
-              src={wallImg}
-              x={0}
-              y={50}
+            {/* <SpriteTest
+              src={spriteImg}
+              x={this.state.charPos.x}
+              y={this.state.charPos.y}
               width={(this.state.xDim/15)}
               height={(this.state.yDim/13)}
-            />
+            /> */}
 
+
+          </Layer>
+
+          <Layer>
+              {this.displayBombs()}
           </Layer>
         </Stage>
       </div>
@@ -184,43 +182,8 @@ export default class GameBoard extends React.Component {
 
 }
 
-
-
-
-
-
-//#################################
-
-//character
-class Character extends React.Component {
-  state = {
-    image: null
-  }
-  componentDidMount() {
-    const image = new window.Image();
-    image.src = this.props.src;
-    image.onload = () => {
-      this.setState({
-        image: image
-      });
-    }
-  }
-
-  render() {
-      return (
-          <Image
-            image={this.state.image}
-            x={this.props.x}
-            y={this.props.y}
-            width={this.props.width}
-            height={this.props.height}
-          />
-      );
-  }
-}
-
 //bomb
-class Bomb extends React.Component {
+export class Bomb extends React.Component {
   state = {
     image: null
   }
@@ -246,3 +209,27 @@ class Bomb extends React.Component {
       );
   }
 }
+
+//######################################
+function mapStateToProps(state){
+  return {
+    entities: state.entities.entities,
+    charPos: {...state.character.charPos},
+    speedX: state.character.speedX,
+    speedY: state.character.speedY
+  }
+}
+
+function mapDispatchToProps(dispatch){
+  // dispatch(showBook())
+  // return {
+  //   addEntity: (entity) => {
+  //     dispatch(addEntity(entity))
+  //   }
+  // }
+  return bindActionCreators({addEntity: addEntity, removeEntity: removeEntity,
+                              setCharPos: setCharPos, updateCharXY: updateCharXY
+                              }, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(GameBoard)

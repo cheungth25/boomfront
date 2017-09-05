@@ -45,93 +45,94 @@ export class KeyListener {
 
 }
 
-// #####################################
-
-//wall tile
-//props: src, x, y, width, height
-export class WallTile extends React.Component {
-  state = {
-    image: null
-  }
-  componentDidMount() {
-    const image = new window.Image();
-    image.src = this.props.src;
-    image.onload = () => {
-      this.setState({
-        image: image
-      });
-    }
-  }
-
-  render() {
-      return (
-          <Image
-            image={this.state.image}
-            x={this.props.x}
-            y={this.props.y}
-            width={this.props.width}
-            height={this.props.height}
-            shadowBlur={10}
-          />
-      );
-  }
-}
-
-//props: style, src, rows, columns, width, height, grid
-export class TileMap extends React.Component {
-
-  shouldComponentUpdate(nextProps, nextState){
-    return false
-  }
-
-  // grid: [
-  //       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  //       1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-  //       1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
-  //       1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-  //       1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
-  //       1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-  //       1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
-  //       1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-  //       1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
-  //       1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-  //       1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
-  //       1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-  //       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-  //       ]
-
-  findXPos(index, columns, width){
-    return ((index % columns) * width)
-  }
-
-  findYPos(index, columns, height){
-    return (Math.trunc(index/columns) * height)
-  }
-
-  formatGrid = () => {
-    //map through tilemap grid
-    //if grid tile value = 0 return null otherwise return Image component
-    //filter out all the null returns
-    return (this.props.grid.map((tileID, index)=>{
-      if (tileID !== 0){
-        return(<WallTile
-          key={index}
-          src={this.props.src[tileID]}
-          x={this.findXPos(index, this.props.columns, this.props.width)}
-          y={this.findYPos(index, this.props.columns, this.props.height)}
-          width={this.props.width}
-          height={this.props.height}
-          />)
-      }else {return null}
-    }).filter((formatedTile)=>{return formatedTile})
-    )
-  }//formatGrid()
-
-  render(){
-    return(
-      <Layer>
-        {this.formatGrid()}
-      </Layer>
-    )
-  }
-}
+// // #####################################
+//
+// //wall tile
+// //props: src, x, y, width, height
+// export class WallTile extends React.Component {
+//   state = {
+//     image: null
+//   }
+//   componentDidMount() {
+//     const image = new window.Image();
+//     image.src = this.props.src;
+//     image.onload = () => {
+//       this.setState({
+//         image: image
+//       });
+//     }
+//   }
+//
+//   render() {
+//       return (
+//           <Image
+//             image={this.state.image}
+//             x={this.props.x}
+//             y={this.props.y}
+//             width={this.props.width}
+//             height={this.props.height}
+//             shadowBlur={10}
+//           />
+//       );
+//   }
+// }
+//
+// //props: style, src, rows, columns, width, height, grid
+// export class TileMap extends React.Component {
+//
+//   shouldComponentUpdate(nextProps, nextState){
+//     return false
+//   }
+//
+//   // grid: [
+//   //       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//   //       1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+//   //       1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+//   //       1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+//   //       1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+//   //       1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+//   //       1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+//   //       1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+//   //       1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+//   //       1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+//   //       1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+//   //       1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+//   //       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+//   //       ]
+//
+//   findXPos(index, columns, width){
+//     return ((index % columns) * width)
+//   }
+//
+//   findYPos(index, columns, height){
+//     return (Math.trunc(index/columns) * height)
+//   }
+//
+//   formatGrid = () => {
+//     //map through tilemap grid
+//     //if grid tile value = 0 return null otherwise return Image component
+//     //filter out all the null returns
+//     return (this.props.grid.map((tileID, index)=>{
+//     //  if (tileID !== 0){
+//       if (this.props.src[tileID]) {
+//         return(<WallTile
+//           key={index}
+//           src={this.props.src[tileID]}
+//           x={this.findXPos(index, this.props.columns, this.props.width)}
+//           y={this.findYPos(index, this.props.columns, this.props.height)}
+//           width={this.props.width}
+//           height={this.props.height}
+//           />)
+//       }else {return null}
+//     }).filter((formatedTile)=>{return formatedTile})
+//     )
+//   }//formatGrid()
+//
+//   render(){
+//     return(
+//       <Layer>
+//         {this.formatGrid()}
+//       </Layer>
+//     )
+//   }
+// }
