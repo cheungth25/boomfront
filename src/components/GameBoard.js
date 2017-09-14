@@ -63,6 +63,7 @@ class GameBoard extends React.Component {
       this.destroyList.forEach((id)=>{
         this.props.removeEntity(id)
       })
+      this.destroyList = []
       this.animateObjects = this.animateObjects.filter((obj)=>{
         let currTime = Date.parse(new Date())
         return (currTime>=(obj.created_at+1200))
@@ -363,7 +364,6 @@ class GameBoard extends React.Component {
   }
 
   displayCanvas = () => {
-    let imageSrc = {1:wallImg, 2:brickImg}
       return (<Stage width={this.state.xDim} height={this.state.yDim} >
         <TileMap
           src={wallImg}

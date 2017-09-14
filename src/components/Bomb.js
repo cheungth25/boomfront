@@ -1,6 +1,6 @@
 import React from 'react';
 import bombSprite from '../assests/bomb_sprite.png'
-import {Layer,Image} from 'react-konva'
+import {Image} from 'react-konva'
 import { connect } from 'react-redux'
 import { addEntity, removeEntity } from '../actions/entities'
 import { killPlayer } from '../actions/character'

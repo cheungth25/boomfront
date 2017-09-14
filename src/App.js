@@ -12,7 +12,8 @@ class App extends Component {
   loggedIn = () => {
     if (this.props.player_info.id) {
       return (
-        <ActionCableProvider url='ws://localhost:3000/cable'>
+        // <ActionCableProvider url='ws://localhost:3000/cable'>
+        <ActionCableProvider url='wss://immense-scrubland-57490.herokuapp.com/cable'>
           <GameBoard xDim={720} yDim={624} route={this.props.route}/>
         </ActionCableProvider>
       )

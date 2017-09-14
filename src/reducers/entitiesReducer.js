@@ -9,7 +9,7 @@ function entitiesReducer(state={
     // console.log('in add entities', state.entities ,action)
       return { ...state, entities: action.entities}
     case 'REMOVE_ENTITY':
-      // console.log('in remove_entity', action.id)
+      console.log('in remove_entity', action.id)
       return { ...state, entities: state.entities.filter((entity)=>{return entity.id !== action.id})}
     default:
       return state;
