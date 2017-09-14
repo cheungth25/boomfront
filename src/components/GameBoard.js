@@ -80,15 +80,13 @@ class GameBoard extends React.Component {
             if (currTime >= (bombTime+3500) && (!this.refs[`bomb${entity.id}`].getWrappedInstance().exploded) && (!this.refs[`bomb${entity.id}`].getWrappedInstance().triggered)){
               this.bombTriggered(entity)
               this.refs[`bomb${entity.id}`].getWrappedInstance().triggered = true;
-            }else if (currTime) >= (bombTime+4000) {
-              this.bombTriggered(entity)
             }
           }
           this.refs[`bomb${entity.id}`].getWrappedInstance().animate()
         }
       })
     this.loopID = window.requestAnimationFrame(this.gameLoop)
-  }, 1000/25)
+  }, 1000/30)
   }
 
   gameStart() {
