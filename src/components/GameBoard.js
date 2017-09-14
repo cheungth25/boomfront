@@ -84,7 +84,7 @@ class GameBoard extends React.Component {
         }
       })
     this.loopID = window.requestAnimationFrame(this.gameLoop)
-  }, 1000/30)
+  }, 1000/25)
   }
 
   gameStart() {
@@ -138,7 +138,7 @@ class GameBoard extends React.Component {
   // ##############
 
   onReceived = (data) => {
-    console.log(data)
+    // console.log(data)
     switch (data.data.type) {
       case 'connect':
         this.props.addSpectator(data.data.spectator)
@@ -393,7 +393,10 @@ class GameBoard extends React.Component {
   displayPlayers = () => {
     return (
       this.props.players.map((player, index)=>{
-        return <List.Item key={index}>{player.name}</List.Item>
+        let playerStatus = player.ready ? "green-status" : "red-status"
+        return <List.Item key={index}>
+          <span className={playerStatus} />
+          {player.name}</List.Item>
       })
     )
   }
