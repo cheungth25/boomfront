@@ -395,7 +395,7 @@ class GameBoard extends React.Component {
       this.props.players.map((player, index)=>{
         let playerStatus = player.ready ? "green-status" : "red-status"
         return <List.Item key={index}>
-          <span className={playerStatus} />
+          <div className={playerStatus} />
           {player.name}</List.Item>
       })
     )
