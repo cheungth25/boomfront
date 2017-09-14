@@ -69,6 +69,8 @@ class GameBoard extends React.Component {
         return (currTime>=(obj.created_at+1200))
       })
 
+
+
       this.props.entities.forEach((entity)=>{
         if (entity.type === 3){
           if(entity.char_id === this.props.charID){
@@ -78,6 +80,8 @@ class GameBoard extends React.Component {
             if (currTime >= (bombTime+3500) && (!this.refs[`bomb${entity.id}`].getWrappedInstance().exploded) && (!this.refs[`bomb${entity.id}`].getWrappedInstance().triggered)){
               this.bombTriggered(entity)
               this.refs[`bomb${entity.id}`].getWrappedInstance().triggered = true;
+            }else if (currTime) >= (bombTime+4000) {
+              this.bombTriggered(entity)
             }
           }
           this.refs[`bomb${entity.id}`].getWrappedInstance().animate()
@@ -431,9 +435,9 @@ class GameBoard extends React.Component {
             <List>
               {this.displaySpectators()}
             </List>
-            <div className="button-margin-js">
+            {/* <div className="button-margin-js">
               <Button active onClick={this.sendMessage}>Send</Button>
-            </div>
+            </div> */}
             {this.displayGameButtons()}
             <div className="button-margin-js">
               <Button onClick={this.exit}>Exit</Button>

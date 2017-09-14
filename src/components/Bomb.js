@@ -14,7 +14,7 @@ class Bomb extends React.Component {
     this.exploded = false;
     this.triggered = false;
     this.tickCount = 0;
-    this.ticksPerFrame = 10;
+    this.ticksPerFrame = 9;
     //this.steps = [1,5,5,5];
     this.currentStep = 0;
     this.lastStep = 1;

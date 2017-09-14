@@ -26,7 +26,7 @@ class Character extends React.Component {
       yMid: this.props.charPos.x + this.props.tileSize/2,
     }
     this.charState = 3;
-    this.props.updateCharSpeed(this.checkCollision('up', 0, -2, charPos))
+    this.props.updateCharSpeed(this.checkCollision('up', 0, -3, charPos))
   }
   moveDown = () => {
     this.charMoving = true;
@@ -39,7 +39,7 @@ class Character extends React.Component {
       yMid: -(this.props.charPos.x + this.props.tileSize/2)
     }
     this.charState = 0;
-    this.props.updateCharSpeed(this.checkCollision('down', 0, 2, charPos))
+    this.props.updateCharSpeed(this.checkCollision('down', 0, 3, charPos))
   }
   moveLeft = () => {
     this.charMoving = true;
@@ -52,7 +52,7 @@ class Character extends React.Component {
       yMid: -(this.props.charPos.y + this.props.tileSize/2)
     }
     this.charState = 1;
-    this.props.updateCharSpeed(this.checkCollision('left', -2, 0, charPos))
+    this.props.updateCharSpeed(this.checkCollision('left', -3, 0, charPos))
   }
   moveRight = () => {
     this.charMoving = true;
@@ -65,7 +65,7 @@ class Character extends React.Component {
       yMid: this.props.charPos.y + this.props.tileSize/2,
     }
     this.charState = 2;
-    this.props.updateCharSpeed(this.checkCollision('right', 2, 0, charPos))
+    this.props.updateCharSpeed(this.checkCollision('right', 3, 0, charPos))
   }
   clearMove = () => {
     // this.charMoving = false;
