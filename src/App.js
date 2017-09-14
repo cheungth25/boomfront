@@ -1,26 +1,39 @@
 import React, { Component } from 'react';
 import './App.css';
-import GameRoom from './components/GameRoom'
 import GameBoard from './components/GameBoard'
+import { connect } from 'react-redux'
 import ActionCableProvider from 'react-actioncable-provider'
+import {Redirect} from 'react-router'
+
 
 
 class App extends Component {
 
-  actioncable = () =>{
-    return(
-    <ActionCableProvider url='ws://localhost:3000/cable'>
-      <GameRoom />
-    </ActionCableProvider>)
+  loggedIn = () => {
+    if (this.props.player_info.id) {
+      return (
+        <ActionCableProvider url='ws://localhost:3000/cable'>
+          <GameBoard xDim={720} yDim={624} route={this.props.route}/>
+        </ActionCableProvider>
+      )
+    }else {
+      return <Redirect to="/" />
+    }
   }
 
   render() {
     return (
-      <div>
-        <GameBoard xDim={720} yDim={624}/>
+      <div className='game-board'>
+        {this.loggedIn()}
       </div>
     );
   }
 }
 
-export default App;
+function mapStateToProps(state){
+  return {
+    player_info: state.players.player_info,
+  }
+}
+
+export default connect(mapStateToProps)(App)

@@ -1,13 +1,16 @@
-let id = 0;
 function entitiesReducer(state={
   entities:[]
   }, action){
   switch (action.type) {
     case 'ADD_ENTITY':
-      id++;
-      return { entities: [...state.entities, {...action.entity, id:id}] }
+      // console.log('in add_entity', action.entity)
+      return { ...state, entities: [...state.entities, action.entity] }
+    case 'ADD_ENTITIES':
+    // console.log('in add entities', state.entities ,action)
+      return { ...state, entities: action.entities}
     case 'REMOVE_ENTITY':
-      return { entities: state.entities.filter((entity)=>{return entity.id !== action.id})}
+      // console.log('in remove_entity', action.id)
+      return { ...state, entities: state.entities.filter((entity)=>{return entity.id !== action.id})}
     default:
       return state;
   }

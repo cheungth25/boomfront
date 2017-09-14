@@ -1,59 +1,22 @@
 import React from 'react';
-import {Image} from 'react-konva'
+import charSprite1 from '../assests/bomberman_sprite_02.png'
+import Sprite from './Sprite'
 import { connect } from 'react-redux'
 import { addEntity, removeEntity } from '../actions/entities'
-import { updateCharSpeed, updateCharXY } from '../actions/character'
+import { updateCharSpeed } from '../actions/character'
 import { bindActionCreators } from 'redux'
 
 class Character extends React.Component {
-  state = {
-    image: null
-  }
-  componentDidMount() {
-    const image = new window.Image();
-    image.src = this.props.src;
-    image.onload = () => {
-      this.setState({
-        image: image
-      });
-    }
+  constructor(props){
+    super(props)
+
+    this.charMoving = false;
+    this.charState = 0;
+    this.ticksPerFrame = 8;
   }
 
-  playerAction = () => {
-    this.clearMove();
-    if ( this.props.keyListener.isPressed(32) ) { //SPACE
-      this.dropBomb();
-    }else if ( this.props.keyListener.isPressed(38) ) { //UP
-      this.moveUp();
-    }else if ( this.props.keyListener.isPressed(40) ) { //DOWN
-      this.moveDown();
-    }else if ( this.props.keyListener.isPressed(37) ) { //LEFT
-      this.moveLeft();
-    }else if ( this.props.keyListener.isPressed(39) ) { //RIGHT
-      this.moveRight();
-    }
-  }
-  // character actions
-  dropBomb = () => {
-    //need to calculate nearest grid box for bomb
-    let nearestX = this.props.charPos.x;
-    let nearestY = this.props.charPos.y;
-    let bomb = {
-      type:3,
-      x: nearestX,
-      y: nearestY,
-      width: this.props.xDim/15,
-      height: this.props.yDim/13
-    }
-    this.props.addEntity(bomb)
-    //debugger
-    //fix this later (bomb should destroy itself after creation)
-    // this.props.entities[this.props.entities.length-1]
-    setTimeout(()=>{
-      this.props.removeEntity(this.props.entities[this.props.entities.length-1].id)
-    },3000)
-  }
   moveUp = () => {
+    this.charMoving = true;
     let charPos = {
       xMin: -(this.props.charPos.y + this.props.tileSize),
       xMax: -(this.props.charPos.y),
@@ -62,9 +25,11 @@ class Character extends React.Component {
       yMax: this.props.charPos.x + this.props.tileSize,
       yMid: this.props.charPos.x + this.props.tileSize/2,
     }
-    this.props.updateCharSpeed(this.checkCollision('up', 0, -1, charPos))
+    this.charState = 3;
+    this.props.updateCharSpeed(this.checkCollision('up', 0, -2, charPos))
   }
   moveDown = () => {
+    this.charMoving = true;
     let charPos = {
       xMin: this.props.charPos.y,
       xMax: this.props.charPos.y + this.props.tileSize,
@@ -73,9 +38,11 @@ class Character extends React.Component {
       yMax: -(this.props.charPos.x),
       yMid: -(this.props.charPos.x + this.props.tileSize/2)
     }
-    this.props.updateCharSpeed(this.checkCollision('down', 0, 1, charPos))
+    this.charState = 0;
+    this.props.updateCharSpeed(this.checkCollision('down', 0, 2, charPos))
   }
   moveLeft = () => {
+    this.charMoving = true;
     let charPos = {
       xMin: -(this.props.charPos.x + this.props.tileSize),
       xMax: -(this.props.charPos.x),
@@ -84,9 +51,11 @@ class Character extends React.Component {
       yMax: -(this.props.charPos.y),
       yMid: -(this.props.charPos.y + this.props.tileSize/2)
     }
-    this.props.updateCharSpeed(this.checkCollision('left', -1, 0, charPos))
+    this.charState = 1;
+    this.props.updateCharSpeed(this.checkCollision('left', -2, 0, charPos))
   }
   moveRight = () => {
+    this.charMoving = true;
     let charPos = {
       xMin: this.props.charPos.x,
       xMax: this.props.charPos.x + this.props.tileSize,
@@ -95,9 +64,11 @@ class Character extends React.Component {
       yMax: this.props.charPos.y + this.props.tileSize,
       yMid: this.props.charPos.y + this.props.tileSize/2,
     }
-    this.props.updateCharSpeed(this.checkCollision('right', 1, 0, charPos))
+    this.charState = 2;
+    this.props.updateCharSpeed(this.checkCollision('right', 2, 0, charPos))
   }
   clearMove = () => {
+    // this.charMoving = false;
     this.props.updateCharSpeed({x:0, y:0})
   }
 
@@ -119,55 +90,58 @@ class Character extends React.Component {
     let entityPos = {}
 
     this.props.entities.forEach((entity)=>{
+      let midOffsetTop = this.props.tileSize/3;
+      let midOffsetBot = -this.props.tileSize/3;
       switch (direction) {
         case 'up':
           entityPos = {
-            xMin: -(entity.y + entity.width),
+            xMin: -(entity.y + this.props.tileSize),
             xMax: -(entity.y),
-            xMid: -(entity.y + entity.width/2),
+            xMid: -(entity.y + this.props.tileSize/2),
             yMin: entity.x,
-            yMax: entity.x + entity.height,
-            yMid: entity.x + entity.height/2,
+            yMax: entity.x + this.props.tileSize,
+            yMid: entity.x + this.props.tileSize/2,
           }
           break;
         case 'down':
           entityPos = {
             xMin: entity.y,
-            xMax: entity.y + entity.height,
-            xMid: entity.y + entity.height/2,
-            yMin: -(entity.x + entity.width),
+            xMax: entity.y + this.props.tileSize,
+            xMid: entity.y + this.props.tileSize/2,
+            yMin: -(entity.x + this.props.tileSize),
             yMax: -(entity.x),
-            yMid: -(entity.x + entity.width/2),
+            yMid: -(entity.x + this.props.tileSize/2),
           }
           break;
         case 'left':
           entityPos = {
-            xMin: -(entity.x + entity.width),
+            xMin: -(entity.x + this.props.tileSize),
             xMax: -(entity.x),
-            xMid: -(entity.x + entity.width/2),
-            yMin: -(entity.y + entity.width),
+            xMid: -(entity.x + this.props.tileSize/2),
+            yMin: -(entity.y + this.props.tileSize),
             yMax: -(entity.y),
-            yMid: -(entity.y + entity.width/2),
+            yMid: -(entity.y + this.props.tileSize/2),
           }
           break;
         case 'right':
           entityPos = {
             xMin: entity.x,
-            xMax: entity.x + entity.width,
-            xMid: entity.x + entity.width/2,
+            xMax: entity.x + this.props.tileSize,
+            xMid: entity.x + this.props.tileSize/2,
             yMin: entity.y,
-            yMax: entity.y + entity.height,
-            yMid: entity.y + entity.height/2,
+            yMax: entity.y + this.props.tileSize,
+            yMid: entity.y + this.props.tileSize/2,
           }
           break;
         default:
           break
       }
       // @#$ need to check if character is in the middle of an entity some how
+
       //check if character reached an entity on the x-axis
       if ((charPos.xMax === entityPos.xMin) && !collisionDetected) {
         //collision detected if character and entity has conflicting mid-point ranges
-        if (charPos.yMid >= entityPos.yMin && charPos.yMid <= entityPos.yMax) {
+        if (charPos.yMid+midOffsetTop >= entityPos.yMin && charPos.yMid+midOffsetBot <= entityPos.yMax) {
           //debugger
           collisionDetected = true;
           speedX = 0;
@@ -181,18 +155,20 @@ class Character extends React.Component {
 
   render(){
     return(
-      <Image
-        image={this.state.image}
-        crop={{
-          x: 0,
-          y: 0,
-          width: 32,
-          height: 32
-        }}
-        x={this.props.x}
-        y={this.props.y}
-        width={this.props.width}
-        height={this.props.height}
+
+      <Sprite
+        ref='sprite'
+        src={charSprite1}
+        x={this.props.charPos.x}
+        y={this.props.charPos.y}
+        width={this.props.xDim/15}
+        height={this.props.yDim/13}
+        cropWidth={32}
+        cropHeight={32}
+        steps={[3,3,3,3,6]}
+        charState={this.charState}
+        triggerSprite={this.charMoving}
+        ticksPerFrame={this.ticksPerFrame}
       />
     )
   }
@@ -210,8 +186,8 @@ function mapStateToProps(state){
 
 function mapDispatchToProps(dispatch){
   return bindActionCreators({addEntity: addEntity, removeEntity: removeEntity,
-                              updateCharSpeed: updateCharSpeed, updateCharXY: updateCharXY
+                              updateCharSpeed: updateCharSpeed
                               }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps,null, { withRef: true })(Character)
+export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(Character)
