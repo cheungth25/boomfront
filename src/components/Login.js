@@ -3,11 +3,12 @@ import LoginAdapter from '../adapters/LoginAdapter'
 import { connect } from 'react-redux'
 import { setPlayer, removePlayer, updateUsers } from '../actions/players'
 import { bindActionCreators } from 'redux'
+import { Grid, Divider, Image } from 'semantic-ui-react'
 
 class Login extends React.Component{
 
   handleSubmit = (event) => {
-    console.log(event, this);
+    // console.log(event, this);
     event.preventDefault();
     let data = { player_name: event.target.player_name.value, game_id: 1}
     LoginAdapter.login(data)
@@ -28,20 +29,25 @@ class Login extends React.Component{
       }
     })
   }
+  // // <Grid centered>
+  // {/* <Divider hidden section /> */}
+  // // <br/>
+  // {/* </Grid> */}
 
   render(){
     return (
-      <div className='login-page'>
-        <form onSubmit={this.handleSubmit}>
-          <h1> Enter Guest Name </h1>
-          <input type='text' name='player_name' placeholder='Player_name' />
-          <input type='submit' value='Enter Lobby' />
-        </form>
-        <br />
-        <br />
-        <h2>Games:</h2>
-
-      </div>
+      <div className='login-style'>
+          <Divider hidden section/>
+          <Image src='giphy.gif' fluid />
+          <h1>BomberMan</h1>
+          <h2> Enter Guest Name </h2>
+        <div className='login-page'>
+          <form onSubmit={this.handleSubmit}>
+            <input type='text' name='player_name' placeholder='Player_name' />
+            <input type='submit' value='Enter Lobby' />
+          </form>
+        </div>
+    </div>
     )
   }
 };

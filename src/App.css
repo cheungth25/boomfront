@@ -1,3 +1,7 @@
+body {
+  background-image: linear-gradient(to top, #f43b47 0%, #453a94 100%) !important;
+}
+
 .App {
   text-align: center;
 }
@@ -41,4 +45,10 @@ div.green-status {
   background-color: green;
   height: 10px;
   width: 10px;
+}
+
+div.login-style {
+  width: 600px;
+  margin: 0 auto;
+  text-align: center;
 }
